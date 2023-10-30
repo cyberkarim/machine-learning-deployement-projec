@@ -13,6 +13,9 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import xgboost as xgb
+import pickle
+import os
 
 
 def load(file_name):
@@ -43,7 +46,8 @@ def normalize(data,threshold):
         else:
             scaler = scaler = MinMaxScaler()
             column=scaler.fit_transform(df[[columns_name]])
-            # print("normalize a categorial variable")  
+            # print("normalize a categorial variable") 
+        model_filename = os.path.join('artifacts', 'scaler.pkl') 
     return data
 
 def filtration(data,threshold):
