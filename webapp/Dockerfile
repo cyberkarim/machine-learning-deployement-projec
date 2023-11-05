@@ -8,4 +8,4 @@ COPY requirements.txt .
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 
-CMD uvicorn api:app --host 0.0.0.0 --port 8080
+CMD ["streamlit", "run", "api.py", "--server.address", "0.0.0.0", "--server.port", "8081"]

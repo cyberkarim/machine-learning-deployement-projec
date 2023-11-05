@@ -1,4 +1,17 @@
 from fastapi import FastAPI
+import univcorn
+
+app = FastAPI()
+
+@app.post("/predict/")
+async def predict():
+    return {"message": "Hello, World"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+
+"""
 from pydantic import BaseModel
 import pickle
 import os
@@ -48,3 +61,4 @@ if __name__=="__main__":
     anomaly_score = predictor_model.fit(inference_data_point)
 
     return anomaly_score
+"""
