@@ -16,8 +16,42 @@ import numpy as np
 import xgboost as xgb
 import pickle
 import os
+import cv2
 
+def data_preprocessing():
+    # Set the paths to your dataset
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    ml_project_path = os.path.dirname(script_path)
+    data_path = os.path.join(ml_project_path, 'data')
+    train_data_path = os.path.join(data_path, 'bottle/train/good')
+    test_data_path_1 = os.path.join(data_path,'bottle/test/broken_large')
+    test_data_path_2 = os.path.join(data_path,'bottle/test/contamination')
+    test_data_path_3 = os.path.join(data_path,'bottle/test/broken_small')
+    test_data_path_4 = os.path.join(data_path, 'bottle/test/good')
+    # Load and preprocess your data
+    def load_images_from_folder(folders):
+        images = []
+        for folder in folders:
+            for filename in os.listdir(folder):
+                img = cv2.imread(os.path.join(folder, filename))
+                if img is not None:
+                    images.append(img)
+        return images
 
+    X_train = np.array(load_images_from_folder([train_data_path]))
+    X_test = np.array(load_images_from_folder([test_data_path_1, test_data_path_2, test_data_path_3, test_data_path_4]))
+    X_train = X_train.reshape(X_train.shape[0], -1)
+    X_train = X_train / 255.0
+    X_test = X_test / 255.0
+    y_train = np.ones(len(X_train))
+    y_test = np.ones(len(X_test))
+    anomalous_indices = [i for i in range(64)]
+    y_test[anomalous_indices] = -1  
+    X_test = X_test.reshape(X_test.shape[0], -1)
+    X = np.append(X_train, X_test, axis = 0)
+    y = np.append(y_train, y_test, axis = 0)
+    df = pd.DataFrame(data=np.c_[X, y], columns=[f"feature_{i}" for i in range(X.shape[1])] + ['target'])
+    return df
 def load(file_name):
     # file_name: sting of the file name to be opened in the working directory
     data=pd.read_csv(file_name)

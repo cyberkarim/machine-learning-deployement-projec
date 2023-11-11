@@ -1,26 +1,20 @@
 from factorized import *
 
-import pandas as pd
-import os
+df = data_preprocessing()
+X_test, y_test, model = model_train(df, [RandomForestClassifier, 'over'])
+# Save Model
+script_path = os.path.dirname(os.path.abspath(__file__))
+ml_project_path = os.path.dirname(script_path)
+artifacts_path = os.path.join(ml_project_path, 'artifacts')
+model_filename = 'model.pkl'
+with open(os.path.join(artifacts_path, model_filename), 'wb') as model_file:
+    pickle.dump(model, model_file)
+# Save Scaling Operation
+scaling_info = {
+    'operation': 'divide_by_255',
+    'scaling_factor': 255.0
+}
 
-# Get the directory of the script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Define the relative path to your data folder
-data_folder_path = os.path.join(script_dir, "../data")
-
-# Construct the path to your CSV file within the data folder
-csv_file_path = os.path.join(data_folder_path, "ref_data.csv")
-
-# Import the database
-credit_card_df = load("../data/ref_data.csv")
-# Drop the time axis and NaN cases
-credit_card_df = credit_card_df.drop('Time', axis = 1)
-
-credit_card_df = credit_card_df.dropna()
-
-# Normalize the data
-credit_card_df = normalize(credit_card_df, 0.2)
-
-# Train data with XGBOOST
-X_test, y_test, model = model_train(credit_card_df, xgb.XGBClassifier())
+scaling_filename = 'scaling_info.pkl'
+with open(os.path.join(artifacts_path, scaling_filename), 'wb') as scaling_file:
+    pickle.dump(scaling_info, scaling_file)
