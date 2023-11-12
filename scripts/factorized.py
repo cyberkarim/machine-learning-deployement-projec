@@ -13,23 +13,14 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import xgboost as xgb
 import pickle
 import os
-
+import cv2
 
 def load(file_name):
     # file_name: sting of the file name to be opened in the working directory
-    data=pd.read_csv(file_name)
-    return data
-
-def ordinal_encoder(data,categorial_variables):
-    # data: data frame with some categorial variables to be encoded with an ordinal encoder
-
-    for cv in categorial_variables:
-        df = pd.DataFrame({cv: data[cv]}) # suppose it is the last column
-        encoder = OrdinalEncoder(categories=[data[cv].unique()])
-        data[cv]=encoder.fit_transform(df[[cv]])
+    data=pd.read_csv(file_name,sep=";")
+    # print(data.shape)
     return data
 
 def normalize(data,threshold):
@@ -39,7 +30,7 @@ def normalize(data,threshold):
     for columns_name in data.columns:
         column=data[columns_name]
         df= pd.DataFrame({columns_name: column})
-        if column.nunique()>unique_value_threshold:           
+        if column.nunique()>unique_value_threshold:        
             scaler = StandardScaler()
             column=scaler.fit_transform(df[[columns_name]])
             # print("normalize a continious variable")
@@ -47,19 +38,11 @@ def normalize(data,threshold):
             scaler = scaler = MinMaxScaler()
             column=scaler.fit_transform(df[[columns_name]])
             # print("normalize a categorial variable") 
-        model_filename = os.path.join('artifacts', 'scaler.pkl') 
     return data
 
-def filtration(data,threshold):
-    # threshold: instance of classes whose population is lower than the threshold are removed
-    class_count=data.iloc[:,-1].value_counts()
-    remove_class=class_count[class_count<threshold].index
-    data = data[~data.iloc[:,-1].isin(remove_class)]
-    print(data.iloc[:,-1].value_counts())
-    return(data)
 
 def model_train(data,model):
-    # model: list containing the model and the sampling option: None:"", Oversampling:"over" and Undersampling:"under"
+    # model: list containing the model and the sampling option: None:"", Oversampling:"SMOTE" and Undersampling:"TomekLinks"
 
    
     y=data.iloc[:,-1]
@@ -113,31 +96,27 @@ def evaluate(data,models_dict):
         print(f"Balanced accuracy de {model_name}: {balanced_accuracy:.2f} \n")
         plt.plot(recall, precision, label=f"{model_name}")
     
+    
     plt.xlabel("Recall")
     plt.ylabel("Precision")
     plt.title("Precision-Recall")
     plt.legend(loc="upper right")
-    # plt.show()
+    plt.show()
+
+# The following part is used to estimate the best model on our data  
+"""
 
 if __name__=="__main__":
 
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    ml_project_path = os.path.dirname(script_path)
+    data_path = os.path.join(ml_project_path, 'data')
+
     # Loading the file 
-    file_name="creditcard.csv"
-    data=load(file_name)
-
-    if file_name=="creditcard.csv":
-        data=data.drop("Time",axis=1)
-
-    # Encoding categorial variables
-    # categorial_variables=["protocol_type","service","flag","label"] # for KDDCup99
-    categorial_variables=["Class"] # for creditcard   
-    data=ordinal_encoder(data,categorial_variables)
+    df=load(data_path+rf"/ref_data.csv")
 
     # Normalize the data
-    data=normalize(data,0.001)
-
-    # Set a minimum number of instance into a class or remove it
-    # data=filtration(data,10)
+    data=normalize(df,0.001)
 
     # Contamination estimation for isolation forest and local factor outlier
     class_count=data.iloc[:,-1].value_counts()
@@ -153,4 +132,4 @@ if __name__=="__main__":
 
     # Evaluate different models to select the best one 
     evaluate(data,models_dict)
-   
+"""
