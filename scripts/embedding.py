@@ -17,11 +17,6 @@ def embedding(img):
     # print(type(img))
     return img
 
-path_to_embedding_pickle=ml_project_path+rf"/artifacts/embedding.pkl"
-
-with open(path_to_embedding_pickle, 'wb') as file_pickle:
-    pickle.dump(embedding, file_pickle)
-
 
 if __name__=="__main__":
 

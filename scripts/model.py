@@ -20,14 +20,6 @@ def normalize_image(df):
 df=normalize_image(df)
 X_test, y_test, model = model_train(df, [RandomForestClassifier(n_estimators=5),"SMOTE"])
 
-
-# Save Scaler
-path_to_scaler_pickle=artifacts_path+rf"/scaler.pkl"
-
-with open(path_to_scaler_pickle, 'wb') as scaler_file:
-    pickle.dump(normalize_image, scaler_file)
-
-
 # Save Model
 path_to_model_pickle=artifacts_path+rf"/model.pkl"
 
