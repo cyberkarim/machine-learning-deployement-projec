@@ -1,0 +1,20 @@
+
+
+
+
+
+
+#browse to the base projet directory (machine-learning-deployment-project).
+#Run the following two commands in order : 
+
+sudo docker build --pull --rm -f "serving/Dockerfile" -t machinelearning:latest "serving"  
+
+sudo docker run -p 8080:8000 --volume "$PWD/artifacts":/app/artifacts --volume "$PWD/data":/app/data machinelearning
+
+#open another terminal
+
+sudo docker ps
+## copy the container ID and paste it as input for -it command parameter :
+sudo docker exec -it <container_id> /bin/bash
+## type ls in the container command line interface, you will get the follwing output :
+#api.py  artifacts  data  requirements.txt, artifact and data folders will appear in different color since they are mounted to your local projects folders (artifacts and data)
