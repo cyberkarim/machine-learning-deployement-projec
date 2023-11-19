@@ -10,13 +10,20 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install pip requirements
-COPY requirements.txt .
-RUN python -m pip install -r requirements.txt
+
 
 WORKDIR /app
-COPY . /app
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
 COPY api.py /app
-COPY requirements.py /app
+COPY requirements.txt /app
+RUN python -m pip install -r requirements.txt
+
+RUN mkdir artifacts
+RUN mkdir data
+
+#VOLUME [ "../artifacts" ]
+RUN ls
 
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
@@ -25,4 +32,5 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "machine-learning-deployment-project.serving/api:app"]
+#CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "machine-learning-deployment-project.serving/api:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "api:app"]

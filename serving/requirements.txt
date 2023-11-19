@@ -2,3 +2,7 @@
 fastapi[all]==0.89.0
 uvicorn[standard]==0.20.0
 gunicorn==20.1.0
+pandas
+opencv-python
+Pillow
+scikit-learn

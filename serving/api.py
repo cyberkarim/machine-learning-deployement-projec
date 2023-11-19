@@ -1,80 +1,91 @@
-from fastapi import FastAPI
-import univcorn
+from fastapi import Body, FastAPI
 from pydantic import BaseModel
+import uvicorn
+import numpy as np
+import pandas as pd
 import pickle
 import os
 from pathlib import Path
+from PIL import Image
 import json
 import csv
+import cv2
 
-class upload_image(BaseModel):
-    uploaded_data : json
+
+
+class Link_upload_image(BaseModel):
+    link= str
 
 class feedback(BaseModel):
-    uploaded_data: json
-    prediction: str
-    target: str
+    uploaded_data= dict
+    prediction= str
+    target= str
 
 def get_project_root() -> Path:
     return Path(__file__).parent.parent
 
-# Function to unplickle artifact files
-def unpickle_embedding_model(path):    
+# Function to unplickle model in artifact file 
+def unpickle_model(path):    
     with open(path, 'rb') as fo:
-        embedding = pickle.load(fo, encoding='bytes')
-    return embedding
+        model = pickle.load(fo)
+    return model
 
-def unpickle_scaler_model(path):    
-    with open(path, 'rb') as fo:
-        scaler = pickle.load(fo, encoding='bytes')
-    return scaler
+# Import embedding and scaler
+def embedding(img):
+    img=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img=cv2.resize(img,(8,8))
+    img=img.reshape(-1) # flatten the matrix
+    # print(type(img))
+    return img
 
-def unpickle_prediction_model(path):    
-    with open(path, 'rb') as fo:
-        predictor = pickle.load(fo, encoding='bytes')
-    return predictor
+def normalize_image(array):
+    return array/255
 
+#project_root=get_project_root()
 
-if __name__=="__main__":
-    # Get path of the project
-    project_root = get_project_root()
+prod_data="data/prod_data.csv"
+model_path = "artifacts/model.pkl"
+model=unpickle_model(model_path)
 
-    # Get path of artifact files
-    scaler_path = os.path.join(project_root,"artifact/scaler.pkl")
-    predictor_path = os.path.join(project_root,"artifact/predictor.pkl")
-    embedding_path = os.path.join(project_root,"artifact/embedding.pkl")
+# Create fastAPI api
+app = FastAPI()
+# "predict" endpoint
+@app.post("/predict")
+def predict_image(upload_image: dict=Body(...)):
 
-    # Unpickle artifact files
-    scaler_model = unpickle_scaler_model(scaler_path)
-    predictor_model = unpickle_prediction_model(predictor_path)
-    embedding_model=unpickle_embedding_model(embedding_path)
+    upload_image=Image.open(upload_image["link"])
+    upload_image=np.array(upload_image)
+
+    upload_image=embedding(upload_image)
+    upload_image=normalize_image(upload_image)
+
+    prediction=model[0].predict(upload_image.reshape(1,-1))[0]
+    return prediction
+
     
-    # Create fastAPI api
-    app = FastAPI()
-    # "predict" endpoint
-    @app.post("/predict/")
-    async def generate_anomaly_score(Data: upload_image):
-        uploaded_image = Data.uploaded_data
-        scaled_data =  scaler_model.fit(uploaded_image)
-        prediction = predictor_model.fit(scaled_data)
-
-        return prediction
+# "feedback" endpoint
+@app.post("/feedback")
+def save_feedback(feedback: dict=Body(...)):
     
-    # "feedback" endpoint
-    @app.post("/feedback/")
-    async def feedback_image(Data: feedback):
-        # get path of prod_data.csv
-        prod_data_path=get_project_root+"/data/prod_data.csv"
+    # fit uploaded image to insert into prod_data.csv
+    upload_image=feedback["link"]
+    prediction=feedback["prediction"]
+    target=feedback["target"]
 
-        # fit uploaded image to insert into prod_data.csv
-        upload_image=feedback.uploaded_data
-        prediction=feedback.prediction
-        target=feedback.target
+    upload_image=Image.open(upload_image)
+    upload_image=np.array(upload_image)
 
-        upload_image_embedding=embedding_model(upload_image)
-        new_data=upload_image_embedding+str(prediction)+str(target)
-        with open(prod_data_path, 'a', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile)
-            csv_writer.writerow(new_data)
+    upload_image=embedding(upload_image)
 
-        
+    upload_image=list(upload_image)
+
+    upload_image.append(int(prediction))
+    upload_image.append(int(target))
+
+    upload_image=map(str,upload_image)
+
+    with open(prod_data, 'a', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile,delimiter=";")
+        csv_writer.writerow(upload_image)
+
+    return 1
