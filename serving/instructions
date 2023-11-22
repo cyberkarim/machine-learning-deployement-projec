@@ -9,7 +9,7 @@
 
 sudo docker build --pull --rm -f "serving/Dockerfile" -t machinelearning:latest "serving"  
 
-sudo docker run -p 8080:8000 --volume "$PWD/artifacts":/app/artifacts --volume "$PWD/data":/app/data machinelearning
+sudo docker run --name serving-api -p 8080:8000 --volume "$PWD/artifacts":/app/artifacts --volume "$PWD/data":/app/data machinelearning 
 
 #open another terminal
 
