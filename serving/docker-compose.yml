@@ -13,11 +13,11 @@ services:
       dockerfile: Dockerfile
 
     volumes:
-      - ../data:/data
-      - ../artifacts:/artifacts
+      - ../data:/app/data
+      - ../artifacts:/app/artifacts
 
     ports:
-      - "8080:8080" 
+      - "8080:8000" 
       
     networks:
       - prod_net

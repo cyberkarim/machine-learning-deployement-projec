@@ -4,17 +4,26 @@
 
 
 
+
+
+#install docker compose
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)"  -o /usr/local/bin/docker-compose
+sudo mv /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
+
+
+sudo docker-compose -f serving/docker-compose.yml up --force-recreate
 #browse to the base projet directory (machine-learning-deployment-project).
 #Run the following two commands in order : 
 
-sudo docker build --pull --rm -f "serving/Dockerfile" -t machinelearning:latest "serving"  
+#sudo docker build --pull --rm -f "serving/Dockerfile" -t machinelearning:latest "serving"  
 
-sudo docker run --name serving-api -p 8080:8000 --volume "$PWD/artifacts":/app/artifacts --volume "$PWD/data":/app/data machinelearning 
+#sudo docker run --name serving-api -p 8080:8000 --volume "$PWD/artifacts":/app/artifacts --volume "$PWD/data":/app/data machinelearning 
 
 #open another terminal
 
-sudo docker ps
+#sudo docker ps
 ## copy the container ID and paste it as input for -it command parameter :
-sudo docker exec -it <container_id> /bin/bash
+#sudo docker exec -it <container_id> /bin/bash
 ## type ls in the container command line interface, you will get the follwing output :
 #api.py  artifacts  data  requirements.txt, artifact and data folders will appear in different color since they are mounted to your local projects folders (artifacts and data)
