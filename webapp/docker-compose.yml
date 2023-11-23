@@ -11,6 +11,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+
+    volumes:
+      - ../data:/app/data
     
     ports:
       - "8081:8081"

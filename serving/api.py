@@ -62,18 +62,28 @@ def predict_image(upload_image: dict=Body(...)):
     prediction=model[0].predict(upload_image.reshape(1,-1))[0]
     return prediction
 
+
     
 # "feedback" endpoint
 @app.post("/feedback")
 def save_feedback(feedback: dict=Body(...)):
     
     # fit uploaded image to insert into prod_data.csv
+    #upload_image=feedback["link"]
+
+    #prediction=feedback["prediction"]
+    #target=feedback["target"]
+
+    #upload_image=Image.open(upload_image)
+    #upload_image=np.array(upload_image["serialized image"])
+     # fit uploaded image to insert into prod_data.csv
     upload_image=feedback["link"]
     prediction=feedback["prediction"]
     target=feedback["target"]
 
     upload_image=Image.open(upload_image)
     upload_image=np.array(upload_image)
+
 
     upload_image=embedding(upload_image)
 
