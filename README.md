@@ -4,9 +4,11 @@
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Ce projet fait usage de deux composants prinicaux:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- un container docker qui tourne l'api de serving qui est lié aux dossiers artifacts et data.
+
+- un container docker qui tourne l'interface web qui est lié aux dossier data/prod images. Le dossiers prod images sera considéré comme intermédiaire de communication entre les deux container. En effet, l'image qui sera lue depuis l'interface web sera stocké sur le dossier data/prod images
 
 ## Add your files
 
