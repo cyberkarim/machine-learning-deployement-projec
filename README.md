@@ -10,7 +10,11 @@ Ce projet fait usage de deux composants prinicaux:
 
 - un container docker qui tourne l'interface web qui est lié au dossier data/prod images. Le dossiers prod images sera considéré comme intermédiaire de communication entre les deux container. En effet, l'image qui sera lue depuis l'interface web et sera stocké dans le dossier data/prod images. Le container de serving lira l'image correspondantes depuis le dossier data/prod images grace au nom du fichier image qui lui sera envoyé par le container webapp via une requete de type post.
 
-Image récapitulative
+Image récapitulative:
+
+![alt text](resources/cap1.png)
+
+
 ## prérequis : 
 docker compose est indispensable pour la suite
 
