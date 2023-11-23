@@ -32,7 +32,8 @@ sudo docker-compose -f serving/docker-compose.yml up --force-recreate
 
 ```
 
-image cap2
+![alt text](resources/cap2.png)
+
 
 
 générer un nouveau terminal
@@ -45,7 +46,8 @@ lancer la commande suivante depuis le nouveau terminal
 sudo docker-compose -f webapp/docker-compose.yml up --force-recreate
 
 ```
-image cap3
+![alt text](resources/cap3.png)
+
 
 
 ## résultats
@@ -55,11 +57,13 @@ image cap3
 
  vous retrouverez l'interface suivante :
 
-cap 4
+![alt text](resources/cap4.png)
 
- insérer une image et entrez l'étiquette réelle de l'image (0 ou 1). Localement, observez le fichier prod_data sur le dossier data. Il sera mis à jour par une nouvelle ligne qui va apparaitre indiquante l'image qui vient d'être traitée.
 
-cap 5
+ insérer une image et entrez l'étiquette réelle de l'image (0 ou 1). Localement, observez le fichier prod_data sur le dossier data. Il sera mis à jour par une nouvelle ligne qui va apparaitre indiquante l'image qui vient d'être traitée. Vous pouvez voir par la même occasion le fichier image que vous avez uploadez dans l'app localement dans le dossier data/prod images
+
+![alt text](resources/cap5.png)
+
 
 
 
