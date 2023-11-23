@@ -8,18 +8,25 @@ Ce projet fait usage de deux composants prinicaux:
 
 - un container docker qui tourne l'api de serving qui est lié aux dossiers artifacts et data.
 
-- un container docker qui tourne l'interface web qui est lié aux dossier data/prod images. Le dossiers prod images sera considéré comme intermédiaire de communication entre les deux container. En effet, l'image qui sera lue depuis l'interface web sera stocké sur le dossier data/prod images
+- un container docker qui tourne l'interface web qui est lié aux dossier data/prod images. Le dossiers prod images sera considéré comme intermédiaire de communication entre les deux container. En effet, l'image qui sera lue depuis l'interface web sera stocké sur le dossier data/prod images.
 
-## Add your files
+Image récapitulative
+## prérequis : 
+docker compose est indispensable pour la suite
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+
+
+
+
+mettez vous sur le dossier de base du projet.
+
+## Container de l'api serving
+
+lancer la commande suivante
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.ec-lyon.fr/kmajdi/machine-learning-deployment-project.git
-git branch -M main
-git push -uf origin main
+sudo docker-compose -f serving/docker-compose.yml up --force-recreate
+
 ```
 
 ## Integrate with your tools
